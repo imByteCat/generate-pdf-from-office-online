@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8">
+    <!-- Bootstrap4 为了确保所有的设备的渲染和触摸效果，必须添加响应式的视图标签 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
+
+    <title>文档转PDF</title>
+</head>
+
+<body>
+<!-- https://view.officeapps.live.com/op/view.aspx?src= -->
+<div class="container">
+	<br />
+    <h1>文档转PDF</h1>
+    <hr/>
+
+    <div class="alert alert-info alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+            &times;
+        </button>
+        <p>Word 测试文件：https://file.how2up.cn/%E6%AF%9B%E6%A6%82%20%285%29.docx</p>
+        <p>PowerPoint 测试文件：https://file.how2up.cn/%E8%9C%97%E7%89%9B%E4%B8%89%E5%88%9B2.0.pptx</p>
+    </div>
+
+    <form role="form">
+        <div class="form-group">
+            <label for="origin">文档链接：</label>
+            <input type="text" value="" id="origin"
+                   class="form-control" placeholder="请输入直链"/>
+            <br/>
+            <input onclick="genPdfUrl()" type="button" value="下载为PDF" id="btn" class="btn btn-success"/>
+        </div>
+    </form>
+</div>
+
+<script>
+    function genPdfUrl() {
+        const originUrl = document.getElementById("origin").value;
+        const ext = /\.(doc|docx|ppt|pptx)$/.exec(originUrl);
+        // 先将链接 UrlDecode 获得原链接（包括还原成 UTF-8 字符）
+        let encodedUrl = decodeURI(originUrl);
+        let urlPrefix;
+        let encodeCount
+
+        /*
+        * 按照文件类型指定链接前缀
+        * */
+
+        // Word
+        if ([".doc", ".docx"].includes(ext[0])) {
+            urlPrefix = "https://sg1-word-view.officeapps.live.com/wv/WordViewer/request.pdf?type=downloadpdf&WOPIsrc=http%3A%2F%2Fsg1%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3D";
+            // 对于 Word 文档，根据生成的链接可以发现进行了两次 UrlEncode
+            encodeCount = 2;
+        }
+
+        // PowerPoint
+        if ([".ppt", ".pptx"].includes(ext[0])) {
+            urlPrefix = "https://hk2-powerpoint.officeapps.live.com/p/pdfhandler.ashx?Pid=WOPIsrc%3Dhttp%253A%252F%252Fhk2%252Dview%252Dwopi%252Ewopi%252Elive%252Enet%253A808%252Foh%252Fwopi%252Ffiles%252F%2540%252FwFileId%253FwFileId%253D";
+            // 对于 PowerPoint 文档，根据生成的链接可以发现进行了三次 UrlEncode
+            encodeCount = 3;
+        }
+
+        // 进行 UrlEncode 迭代
+        for (let i = 0; i < encodeCount; i++) {
+            encodedUrl = encodeURIComponent(encodedUrl);
+        }
+
+        // 拼接完整链接
+        const fullUrl = urlPrefix + encodedUrl;
+
+        console.log(fullUrl);
+        // 打开生成的 PDF 链接
+        window.open(fullUrl);
+    }
+</script>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="//cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.slim.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/popper.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
